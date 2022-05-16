@@ -1,3 +1,4 @@
+import { useState } from "react";
 import styled from "styled-components";
 
 type ContainerProps = {
@@ -19,6 +20,11 @@ type CircleProps = {
 };
 
 function Circle ({yhBGColor, yhBDColor, text = "default text"}: CircleProps) {
+    // 제네릭 타입으로 2개의 타입을 가진 state를 정의할수있다
+    const [val, setVal] = useState<number|string>(0);
+    setVal("2");
+    setVal(2);
+    setVal(false);
     return (
         <Container bgColor={yhBGColor} borderColor={yhBDColor ?? yhBGColor}>
             {text}
