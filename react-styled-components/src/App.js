@@ -1,130 +1,107 @@
 import styled from 'styled-components';
 import { keyframes } from 'styled-components';
 
-const Father = styled.div`
-  display: flex;
-`;
-// #2.1
-// const BoxOne = styled.div`
-//   background-color: teal;
-//   width: 100px;
-//   height: 100px;
-// `;
-// const BoxTwo = styled.div`
-//   background-color: tomato;
-//   width: 100px;
-//   height: 100px;
-// `;
-// const Text = styled.span`
-//   color: #fff;
+// const Warpper = styled.div`
+//   display: flex;
 // `;
 
-// #2.2
+// css상속 예제
 // const Box = styled.div`
 //   background-color: ${(props) => props.bgColor};
 //   width: 100px;
 //   height: 100px;
 // `;
-// // 아래와 같이하면 기본 css값이 중복됨
-// // const Circle = styled.div`
-// //   background-color: ${(props) => props.bgColor};
-// //   width: 100px;
-// //   height: 100px;
-// //   border-radius: 50px;
-// // `;
-// // 중복제거 방법 (상속개념임)
 // const Circle = styled(Box)`
 //   border-radius: 50px;
 // `;
 
-// #2.3
+// html 태그명만 바꾸기 예제
 // const Btn = styled.button`
-//   color: #fff;
-//   background-color: tomato;
-//   border: 0;
-//   border-radius: 15px;
+//   color: tomato;
 // `;
-// 특정 태그들에 동일한 속성값을 주고 싶을 때
-// const Input = styled.input.attrs({required: true, minLength: 10})`
+
+// html 반복되는 속성 처리법
+// const Input = styled.input.attrs({required : true})`
 //   background-color: tomato;
 // `;
 
-// #2.4
+// 애니메이션 예제
+// export를 해주면 다른곳에서도 해당 애니메이션 효과를 사용가능함
+const colorAni = keyframes`
+  form {
+    color: teal;
+  }
+  to {
+    color: tomato;
+  }
+`;
+
+// const Btn = styled.button`
+//   animation: ${colorAni} .5s infinite;
+// `;
+
+// 부모에서 자식 태그 선택자 사용하는법
+// const Warpper = styled.div`
+//   display: flex;
+//   height: 100vh;
+//   width: 100vw;
+//   justify-content: center;
+//   align-items: center;
+//   h1 {
+//     color: tomato;
+//     /* 자기 자신을 선택하는 셀렉터기호 */
+//     &:hover {
+//       color: teal;
+//     }
+//   }
+// `;
+
+// styled-components를 선택자로 쓰는법
+const Title = styled.h1`
+  color: tomato;
+  &:hover {
+    color: teal;
+  }
+`;
+
 const Warpper = styled.div`
   display: flex;
-`;
-const rotateAni = keyframes`
-  0% {
-    transform: rotate(0deg);
-    border-radius: 0px;
-  }
-  50% {
-    border-radius: 100px;
-  }
-  100% {
-    transform: rotate(360deg);
-    border-radius: 0px;
-  }
-`;
-
-// #2.5
-const Emoji = styled.span`
-  font-size: 50px;
-`;
-
-const Box = styled.div`
-  width: 200px;
-  height: 200px;
-  background-color: tomato;
-  display: flex;
+  height: 100vh;
+  width: 100vw;
   justify-content: center;
   align-items: center;
-  animation: ${rotateAni} 1s linear infinite;
-  ${Emoji}:hover {
-    font-size: 100px;
+  ${Title}:hover {
+    font-size: 60px;
   }
 `;
-
 
 
 function App() {
   return (
-    // <Father>
-    //   {/* #2.1 */}
-    //   {/* <BoxOne>
-    //      <Text>Hello</Text>
-    //    </BoxOne>
-    //    <BoxTwo/> */}
-
-    //   {/* #2.2 */}
-    //   {/* <Box bgColor="teal"/> */}
-    //   {/* <Box bgColor="tomato"/> */}
-    //   {/* <Circle bgColor="tomato"/> */}
-
-    //    {/* #2.3 */}
-    //    {/* as 속성으로 styled의 태그명을 바꿀수있음 */}
-    //    {/* <Btn>Log in</Btn>
-    //    <Btn as='a'>Log in</Btn> */}
-    //    {/* 특정 태그들에 동일한 속성값을 주고 싶을 때 */}
-    //    <Input/>
-    //    <Input/>
-    //    <Input/>
-    //    <Input/>
-    //    <Input/>
-    // </Father>
-
     <Warpper>
-      {/* #2.4 */}
-      {/* <Box>
-        <span>😁</span>
-      </Box> */}
+      {/* css상속 예제 */}
+      {/* <Box bgColor="teal"/>
+      <Circle  bgColor="tomato"/> */}
 
-      {/* #2.5 */}
-      {/* 내가만든 컴포넌트도 선택자로 사용가능함 */}
-      <Box>
-        <Emoji>😁</Emoji>
-      </Box>
-      <Emoji>🎉</Emoji>
+      {/* html 태그명만 바꾸기 예제 */}
+      {/* <Btn>Log in</Btn>
+      <Btn as={'a'}>Go Home</Btn> */}
+
+      {/* html 반복되는 속성 처리법 */}
+      {/* <Input/>
+      <Input/>
+      <Input/>
+      <Input/> */}
+
+      {/* 애니메이션 예제 */}
+      {/* <Btn>Hello!!</Btn> */}
+
+      {/* 부모에서 자식 태그 선택자 사용하는법 */}
+      {/* <h1>Hello~</h1> */}
+
+      {/* styled-components를 선택자로 쓰는법 */}
+      <Title>Hello~~</Title>
+      <h1>Hello~~</h1>
     </Warpper>
   );
 }
