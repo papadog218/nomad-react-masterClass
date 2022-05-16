@@ -1,21 +1,12 @@
 import styled from "styled-components";
-
-const Warpper = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: ${(props) => props.theme.bgColor};
-`;
-
-const Title = styled.h1`
-  color: ${(props) => props.theme.txtColor};
-`;
+import Circle from "./Circle";
 
 function App() {
   return (
-    <Warpper>
-      <Title>Hello typeScript!</Title>
-    </Warpper>
+   <div>
+     <Circle yhBG='teal'/>
+     <Circle yhBG='tomato'/>
+   </div>
   );
 }
 
