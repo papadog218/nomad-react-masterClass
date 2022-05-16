@@ -66,6 +66,12 @@ const rotateAni = keyframes`
     border-radius: 0px;
   }
 `;
+
+// #2.5
+const Emoji = styled.span`
+  font-size: 50px;
+`;
+
 const Box = styled.div`
   width: 200px;
   height: 200px;
@@ -74,13 +80,12 @@ const Box = styled.div`
   justify-content: center;
   align-items: center;
   animation: ${rotateAni} 1s linear infinite;
-  span {
-   font-size: 50px;
-   &:hover { // &로 자기 자신의 이름을 가져올수있음
+  ${Emoji}:hover {
     font-size: 100px;
-   }
   }
 `;
+
+
 
 function App() {
   return (
@@ -108,11 +113,18 @@ function App() {
     //    <Input/>
     // </Father>
 
-    // #2.4
     <Warpper>
-      <Box>
+      {/* #2.4 */}
+      {/* <Box>
         <span>😁</span>
+      </Box> */}
+
+      {/* #2.5 */}
+      {/* 내가만든 컴포넌트도 선택자로 사용가능함 */}
+      <Box>
+        <Emoji>😁</Emoji>
       </Box>
+      <Emoji>🎉</Emoji>
     </Warpper>
   );
 }
