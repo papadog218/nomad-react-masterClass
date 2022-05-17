@@ -21,8 +21,9 @@ const Coin = styled.li`
     border-radius: 15px;
     a {
         transition: color .2s ease-in;
-        display: block;
         padding: 20px;
+        display: flex;
+        align-items: center;
     }
     &:hover {
         a {
@@ -39,6 +40,12 @@ const Title = styled.h1`
 const Loader = styled.span`
     text-align: center;
     display: block;
+`;
+
+const Img = styled.img`
+    width: 36px;
+    height: 36px;
+    margin-right: 10px;
 `;
 
 interface CoinInterface {
@@ -74,7 +81,10 @@ function Coins() {
                     {coins.map((coin) => (
                         <Coin key={coin.id}>
                             {/* a를 쓰면 새로고침이 되니깐 안되게하려고 <Link>를 사용함 */}
-                            <Link to={`/${coin.id}`}>{coin.name} &rarr;</Link>
+                            <Link to={`/${coin.id}`} state={{name: coin.name}}>
+                                <Img src={`https://cryptocurrencyliveprices.com/img/${coin.id}.png`}/>
+                                {coin.name} &rarr;
+                            </Link>
                         </Coin>
                     ))}
                 </CoinsList>
