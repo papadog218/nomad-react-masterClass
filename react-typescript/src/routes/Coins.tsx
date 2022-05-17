@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
+import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
+import { fetchCoins } from "../api";
 
 const Container = styled.div`
     padding: 0 20px;
@@ -48,7 +50,7 @@ const Img = styled.img`
     margin-right: 10px;
 `;
 
-interface CoinInterface {
+interface ICoin {
     id: string,
     name: string,
     symbol: string,
@@ -59,26 +61,29 @@ interface CoinInterface {
 }
 
 function Coins() {
-    const [coins, setCoins] = useState<CoinInterface[]>([]);
-    const [loading, setLoading] = useState(true);
+    // const [coins, setCoins] = useState<CoinInterface[]>([]);
+    // const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        (async () => {
-            const res =  await fetch('https://api.coinpaprika.com/v1/coins');
-            const json = await res.json();
-            setCoins(json.slice(0, 100));
-            setLoading(false);
-        })();
-    }, []);
+    // useEffect(() => {
+    //     (async () => {
+    //         const res =  await fetch('https://api.coinpaprika.com/v1/coins');
+    //         const json = await res.json();
+    //         setCoins(json.slice(0, 100));
+    //         setLoading(false);
+    //     })();
+    // }, []);
+
+    const {isLoading, data} = useQuery<ICoin[]>('allCoins',fetchCoins);
+
     return (
         <Container>
             <Header>
                 <Title>Coins</Title>
             </Header>
-            {loading ? <Loader>'Loading...'</Loader>
+            {isLoading ? <Loader>'Loading...'</Loader>
             : (
                 <CoinsList>
-                    {coins.map((coin) => (
+                    {data?.slice(0, 100).map((coin) => (
                         <Coin key={coin.id}>
                             {/* a를 쓰면 새로고침이 되니깐 안되게하려고 <Link>를 사용함 */}
                             <Link to={`/${coin.id}`} state={{name: coin.name}}>
