@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
+import { useQuery } from "react-query";
 import { Link, useMatch } from "react-router-dom";
 import { Outlet, Route, Routes, useLocation, useParams } from "react-router-dom";
 import styled from "styled-components";
+import { fetchCoinInfo, fetchCoinTickers } from "../api";
 import Chart from "./Chart";
 import Price from "./Price";
 
@@ -69,14 +71,15 @@ const Tab = styled.span<{ isActive: boolean }>`
 
 
 // interface 를 type 으로 변경하니 잘됨
-type RouteParams = {
-    coinId: string;
-}
-
-// interface를 사용하려면 const { state } = useLocation() as RouteState; 이런 형식으로..
-// interface RouteParams {
+// #4.10 에서 리액트쿼리 도입하자 사용할 수 없게되서 인터페이스로 변경함
+// type RouteParams = {
 //     coinId: string;
 // }
+
+// interface를 사용하려면 const { state } = useLocation() as RouteState; 이런 형식으로..
+interface RouteParams {
+    coinId: string;
+}
 interface RouteState {
     state: {name: string};
 }
@@ -135,28 +138,38 @@ interface PriceData {
 }
 
 function Coin() {
-    const {coinId} = useParams<RouteParams>();
-    // const {coinId} = useParams() as unknown as RouteParams;
-    const [loading, setLoading] = useState(true);
+    // const {coinId} = useParams<RouteParams>();
+    const {coinId} = useParams() as unknown as RouteParams;
     const { state } = useLocation() as RouteState;
-    const [info, setInfo] = useState<InfoData>();
-    const [priceInfo, setPriceInfo] = useState<PriceData>();
     const priceMatch = useMatch("/:coinId/price");
     const chartMatch = useMatch("/:coinId/chart");
+    // react-query가 여기부터
+    // const [loading, setLoading] = useState(true);
+    // const [info, setInfo] = useState<InfoData>();
+    // const [priceInfo, setPriceInfo] = useState<PriceData>();
+    // useEffect(() => {
+    //     (async () => {
+    //         const infoData = await (
+    //             await fetch(`https://api.coinpaprika.com/v1/coins/${coinId}`)
+    //         ).json();
+    //         const priceData = await (
+    //             await fetch(`https://api.coinpaprika.com/v1/tickers/${coinId}`)
+    //         ).json();
+    //         setInfo(infoData);
+    //         setPriceInfo(priceData);
+    //         setLoading(false);
+    //     })();
+    // }, [coinId]);
+    // react-query가 여기까지의 기능을 구현함
 
-    useEffect(() => {
-        (async () => {
-            const infoData = await (
-                await fetch(`https://api.coinpaprika.com/v1/coins/${coinId}`)
-            ).json();
-            const priceData = await (
-                await fetch(`https://api.coinpaprika.com/v1/tickers/${coinId}`)
-            ).json();
-            setInfo(infoData);
-            setPriceInfo(priceData);
-            setLoading(false);
-        })();
-    }, [coinId]);
+    const {isLoading: infoLoading, data: infoData} = useQuery<InfoData>(
+        ["info",coinId], () => fetchCoinInfo(coinId)
+    );
+    const {isLoading: tickersLoading, data: tickersData} = useQuery<PriceData>(
+        ["tickers",coinId], () => fetchCoinTickers(coinId)
+    );
+
+    const loading = infoLoading || tickersLoading;
 
     return (
         <Container>
@@ -165,7 +178,7 @@ function Coin() {
                     url을 치고 접근할 경우 state에 값을 못받은 상태가 됨으로 에러 발생함
                     이를 방지하고자 state.name 을 state?.name || 'Loading...' 으로 변경함 
                 */}
-                <Title>{state?.name ? state.name : loading ? "Loading..." : info?.name}</Title>
+                <Title>{state?.name ? state.name : loading ? "Loading..." : infoData?.name}</Title>
             </Header>
             {/* {loading ? <Loader>'Loading...'</Loader> : priceInfo?.quotes.USD.ath_price} */}
             {loading ? <Loader>'Loading...'</Loader> : (
@@ -173,26 +186,26 @@ function Coin() {
                     <Overview>
                         <OverviewItem>
                             <span>Rank:</span>
-                            <span>{info?.rank}</span>
+                            <span>{infoData?.rank}</span>
                         </OverviewItem>
                         <OverviewItem>
                             <span>Symbol:</span>
-                            <span>${info?.symbol}</span>
+                            <span>${infoData?.symbol}</span>
                         </OverviewItem>
                         <OverviewItem>
                             <span>Open Source:</span>
-                            <span>{info?.open_source ? "Yes" : "No"}</span>
+                            <span>{infoData?.open_source ? "Yes" : "No"}</span>
                         </OverviewItem>
                     </Overview>
-                    <Description>{info?.description}</Description>
+                    <Description>{infoData?.description}</Description>
                     <Overview>
                         <OverviewItem>
                             <span>Total Suply:</span>
-                            <span>{priceInfo?.total_supply}</span>
+                            <span>{tickersData?.total_supply}</span>
                         </OverviewItem>
                         <OverviewItem>
                             <span>Max Supply:</span>
-                            <span>{priceInfo?.max_supply}</span>
+                            <span>{tickersData?.max_supply}</span>
                         </OverviewItem>
                     </Overview>
                     <Tabs>
