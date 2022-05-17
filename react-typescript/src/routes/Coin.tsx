@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { Outlet, Route, Routes, useLocation, useParams } from "react-router-dom";
 import styled from "styled-components";
+import Chart from "./Chart";
+import Price from "./Price";
 
 const Container = styled.div`
     padding: 0 20px;
@@ -13,16 +15,36 @@ const Header = styled.header`
     justify-content: center;
     align-items: center;
 `;
-
 const Loader = styled.span`
     text-align: center;
     display: block;
 `;
-
 const Title = styled.h1`
     font-size: 48px;
     color: ${(porps) => porps.theme.accentColor};
 `;
+const Overview = styled.div`
+  display: flex;
+  justify-content: space-between;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 10px 20px;
+  border-radius: 10px;
+`;
+const OverviewItem = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  span:first-child {
+    font-size: 10px;
+    font-weight: 400;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+  }
+`;
+const Description = styled.p`
+  margin: 20px 0px;
+`;
+
 
 // interface 를 type 으로 변경하니 잘됨
 type RouteParams = {
@@ -108,9 +130,9 @@ function Coin() {
             ).json();
             setInfo(infoData);
             setPriceInfo(priceData);
-            // setLoading(false);
+            setLoading(false);
         })();
-    }, []);
+    }, [coinId]);
 
     return (
         <Container>
@@ -119,10 +141,39 @@ function Coin() {
                     url을 치고 접근할 경우 state에 값을 못받은 상태가 됨으로 에러 발생함
                     이를 방지하고자 state.name 을 state?.name || 'Loading...' 으로 변경함 
                 */}
-                <Title>{state?.name || 'Loading...'}</Title>
+                <Title>{state?.name ? state.name : loading ? "Loading..." : info?.name}</Title>
             </Header>
             {/* {loading ? <Loader>'Loading...'</Loader> : priceInfo?.quotes.USD.ath_price} */}
-            {loading ? <Loader>'Loading...'</Loader> : priceInfo?.quotes.USD.ath_price}
+            {loading ? <Loader>'Loading...'</Loader> : (
+                <>
+                    <Overview>
+                        <OverviewItem>
+                            <span>Rank:</span>
+                            <span>{info?.rank}</span>
+                        </OverviewItem>
+                        <OverviewItem>
+                            <span>Symbol:</span>
+                            <span>${info?.symbol}</span>
+                        </OverviewItem>
+                        <OverviewItem>
+                            <span>Open Source:</span>
+                            <span>{info?.open_source ? "Yes" : "No"}</span>
+                        </OverviewItem>
+                    </Overview>
+                    <Description>{info?.description}</Description>
+                    <Overview>
+                        <OverviewItem>
+                            <span>Total Suply:</span>
+                            <span>{priceInfo?.total_supply}</span>
+                        </OverviewItem>
+                        <OverviewItem>
+                            <span>Max Supply:</span>
+                            <span>{priceInfo?.max_supply}</span>
+                        </OverviewItem>
+                    </Overview>
+                    <Outlet/>
+                </>
+            )}
         </Container>
     );
 }
