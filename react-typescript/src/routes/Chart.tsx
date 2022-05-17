@@ -1,6 +1,6 @@
 function Chart() {
     return (
-        <h1>Chart</h1>
+        <h1>chart</h1>
     );
 }
 
