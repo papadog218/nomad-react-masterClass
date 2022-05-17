@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import styled from "styled-components";
 
@@ -36,13 +36,28 @@ function Coin() {
     const {coinId} = useParams<RouteParams>();
     const [loading, setLoading] = useState(true);
     const { state } = useLocation() as RouteState;
+    const [info, setInfo] = useState({});
+    const [priceInfo, setPriceInfo] = useState({});
+
+    useEffect(() => {
+        (async () => {
+            const infoData = await (
+                await fetch(`https://api.coinpaprika.com/v1/coins/${coinId}`)
+            ).json();
+            const priceData = await (
+                await fetch(`https://api.coinpaprika.com/v1/tickers/${coinId}`)
+            ).json();
+            setInfo(infoData);
+            setPriceInfo(priceData);
+        })();
+    }, []);
 
     return (
         <Container>
             <Header>
                 {/*
                     url을 치고 접근할 경우 state에 값을 못받은 상태가 됨으로 에러 발생함
-                    이를 방지하고자 state.name 을 state?.name || 'Loading...' 으로 변경함
+                    이를 방지하고자 state.name 을 state?.name || 'Loading...' 으로 변경함 
                 
                 */}
                 <Title>{state?.name || 'Loading...'}</Title>
