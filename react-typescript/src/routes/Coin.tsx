@@ -148,7 +148,11 @@ interface PriceData {
   };
 }
 
-function Coin() {
+interface ICoinProps {
+  isDark: boolean;
+}
+
+function Coin({isDark}: ICoinProps) {
 
     // const {coinId} = useParams<RouteParams>();
     const {coinId} = useParams() as unknown as RouteParams;
@@ -222,7 +226,7 @@ function Coin() {
                     </Tab>
                 </Tabs>
 
-                <Outlet context={{coinId}}/>
+                <Outlet context={{coinId, isDark}}/>
             </>
         )}
     </Container>
