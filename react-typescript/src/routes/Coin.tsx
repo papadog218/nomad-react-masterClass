@@ -162,6 +162,7 @@ function Coin() {
     // }, [coinId]);
     // react-query가 여기까지의 기능을 구현함
 
+    // isLoading: infoLoading re네이밍함
     const {isLoading: infoLoading, data: infoData} = useQuery<InfoData>(
         ["info",coinId], () => fetchCoinInfo(coinId)
     );
@@ -216,7 +217,7 @@ function Coin() {
                             <Link to={`/${coinId}/price`}>Price</Link>
                         </Tab>
                     </Tabs>
-                    <Outlet/>
+                    <Outlet context={{coinId}}/>
                 </>
             )}
         </Container>
