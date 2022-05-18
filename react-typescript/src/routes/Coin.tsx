@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
+import {Helmet} from 'react-helmet';
 import { Link, useMatch } from "react-router-dom";
 import { Outlet, Route, Routes, useLocation, useParams } from "react-router-dom";
 import styled from "styled-components";
@@ -164,16 +165,24 @@ function Coin() {
 
     // isLoading: infoLoading re네이밍함
     const {isLoading: infoLoading, data: infoData} = useQuery<InfoData>(
-        ["info",coinId], () => fetchCoinInfo(coinId)
+        ["info",coinId],
+        () => fetchCoinInfo(coinId),
     );
     const {isLoading: tickersLoading, data: tickersData} = useQuery<PriceData>(
-        ["tickers",coinId], () => fetchCoinTickers(coinId)
+        ["tickers",coinId],
+        () => fetchCoinTickers(coinId),
+        {
+            refetchInterval: 5000,
+        }
     );
 
     const loading = infoLoading || tickersLoading;
 
     return (
         <Container>
+            <Helmet>
+                <title>{state?.name ? state.name : loading ? "Loading..." : infoData?.name}</title>
+            </Helmet>
             <Header>
                 {/*
                     url을 치고 접근할 경우 state에 값을 못받은 상태가 됨으로 에러 발생함
@@ -194,8 +203,8 @@ function Coin() {
                             <span>${infoData?.symbol}</span>
                         </OverviewItem>
                         <OverviewItem>
-                            <span>Open Source:</span>
-                            <span>{infoData?.open_source ? "Yes" : "No"}</span>
+                            <span>Price:</span>
+                            <span>{tickersData?.quotes.USD.price.toFixed(3)}</span>
                         </OverviewItem>
                     </Overview>
                     <Description>{infoData?.description}</Description>
