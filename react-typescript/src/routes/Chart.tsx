@@ -1,6 +1,18 @@
+import ReactApexChart from "react-apexcharts";
 import { useQuery } from "react-query";
 import { useOutletContext } from "react-router-dom";
 import { fetchCoinHistory } from "../api";
+
+interface IHistorical {
+    time_open: string;
+    time_close: string;
+    open: number;
+    high: number;
+    low: number;
+    close: number;
+    volume: number;
+    market_cap: number;
+}
 
 interface ChartProps {
     coinId: string;
@@ -12,9 +24,49 @@ function Chart() {
     // console.log(parms);
 
     const {coinId} = useOutletContext<ChartProps>();
-    const {isLoading, data} = useQuery(['ohlcv', coinId], () => fetchCoinHistory(coinId));
+    const {isLoading, data} = useQuery<IHistorical[]>(['ohlcv', coinId], () => fetchCoinHistory(coinId));
+
     return (
-        <h1>chart</h1>
+        <div>
+            {
+                isLoading ? 'Loading chart..' :
+                    <ReactApexChart
+                        type="line"
+                        series={[
+                            {
+                                name: "Price",
+                                data: data?.map((price) => price.close) as number[],
+                            },
+                        ]}
+                        options={{
+                            theme: {
+                                mode: "dark",
+                            },
+                            chart: {
+                                height: 300,
+                                width: 500,
+                                toolbar: {
+                                show: false,
+                                },
+                                background: "transparent",
+                            },
+                            grid: { show: false },
+                            stroke: {
+                                curve: "smooth",
+                                width: 4,
+                            },
+                            yaxis: {
+                                show: false,
+                            },
+                            xaxis: {
+                                axisBorder: { show: false },
+                                axisTicks: { show: false },
+                                labels: { show: false },
+                            },
+                        }}
+                    />
+            }
+        </div>
     );
 }
 
