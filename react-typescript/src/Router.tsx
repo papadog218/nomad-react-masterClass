@@ -1,5 +1,6 @@
 // import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import TopMenu from './inculdes/TopMenu';
 import Chart from './routes/Chart';
 import Coin from './routes/Coin';
 import Coins from './routes/Coins';
@@ -23,6 +24,7 @@ function Router({}: IRouterProps) {
             </Switch> */}
 
             {/* react-router-dom v6.3.0 */}
+            <TopMenu/>
             <Routes>
                 <Route path='/' element={<Coins />} />
                 <Route path='/:coinId' element={<Coin />}>
