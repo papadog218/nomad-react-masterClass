@@ -1,32 +1,41 @@
-import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
-import {Helmet} from 'react-helmet';
-import { Link, useMatch } from "react-router-dom";
-import { Outlet, Route, Routes, useLocation, useParams } from "react-router-dom";
+import { Helmet } from "react-helmet";
+import {
+  Route,
+  useLocation,
+  useParams,
+  Outlet,
+  useMatch,
+} from "react-router-dom";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { fetchCoinInfo, fetchCoinTickers } from "../api";
 import Chart from "./Chart";
 import Price from "./Price";
 
-const Container = styled.div`
-    padding: 0 20px;
-    max-width: 480px;
-    margin: 0 auto;
-`;
-const Header = styled.header`
-    height: 10vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-`;
-const Loader = styled.span`
-    text-align: center;
-    display: block;
-`;
 const Title = styled.h1`
-    font-size: 48px;
-    color: ${(porps) => porps.theme.accentColor};
+  font-size: 48px;
+  color: ${(props) => props.theme.accentColor};
 `;
+
+const Loader = styled.span`
+  text-align: center;
+  display: block;
+`;
+
+const Container = styled.div`
+  padding: 0px 20px;
+  max-width: 480px;
+  margin: 0 auto;
+`;
+
+const Header = styled.header`
+  height: 15vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
 const Overview = styled.div`
   display: flex;
   justify-content: space-between;
@@ -38,6 +47,7 @@ const OverviewItem = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 33%;
   span:first-child {
     font-size: 10px;
     font-weight: 400;
@@ -48,6 +58,7 @@ const OverviewItem = styled.div`
 const Description = styled.p`
   margin: 20px 0px;
 `;
+
 const Tabs = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -61,15 +72,14 @@ const Tab = styled.span<{ isActive: boolean }>`
   font-size: 12px;
   font-weight: 400;
   background-color: rgba(0, 0, 0, 0.5);
-  padding: 7px 0px;
   border-radius: 10px;
   color: ${(props) =>
     props.isActive ? props.theme.accentColor : props.theme.txtColor};
   a {
+    padding: 7px 0px;
     display: block;
   }
 `;
-
 
 // interface 를 type 으로 변경하니 잘됨
 // #4.10 에서 리액트쿼리 도입하자 사용할 수 없게되서 인터페이스로 변경함
@@ -79,158 +89,143 @@ const Tab = styled.span<{ isActive: boolean }>`
 
 // interface를 사용하려면 const { state } = useLocation() as RouteState; 이런 형식으로..
 interface RouteParams {
-    coinId: string;
+  coinId: string;
 }
 interface RouteState {
     state: {name: string};
 }
 interface InfoData {
-    id: string;
-    name: string;
-    symbol: string;
-    rank: number;
-    is_new: boolean;
-    is_active: boolean;
-    type: string;
-    description: string;
-    message: string;
-    open_source: boolean;
-    started_at: string;
-    development_status: string;
-    hardware_wallet: boolean;
-    proof_type: string;
-    org_structure: string;
-    hash_algorithm: string;
-    first_data_at: string;
-    last_data_at: string;
+  id: string;
+  name: string;
+  symbol: string;
+  rank: number;
+  is_new: boolean;
+  is_active: boolean;
+  type: string;
+  description: string;
+  message: string;
+  open_source: boolean;
+  started_at: string;
+  development_status: string;
+  hardware_wallet: boolean;
+  proof_type: string;
+  org_structure: string;
+  hash_algorithm: string;
+  first_data_at: string;
+  last_data_at: string;
 }
 interface PriceData {
-    id: string;
-    name: string;
-    symbol: string;
-    rank: number;
-    circulating_supply: number;
-    total_supply: number;
-    max_supply: number;
-    beta_value: number;
-    first_data_at: string;
-    last_updated: string;
-    quotes: {
-      USD: {
-        ath_date: string;
-        ath_price: number;
-        market_cap: number;
-        market_cap_change_24h: number;
-        percent_change_1h: number;
-        percent_change_1y: number;
-        percent_change_6h: number;
-        percent_change_7d: number;
-        percent_change_12h: number;
-        percent_change_15m: number;
-        percent_change_24h: number;
-        percent_change_30d: number;
-        percent_change_30m: number;
-        percent_from_price_ath: number;
-        price: number;
-        volume_24h: number;
-        volume_24h_change_24h: number;
-      };
+  id: string;
+  name: string;
+  symbol: string;
+  rank: number;
+  circulating_supply: number;
+  total_supply: number;
+  max_supply: number;
+  beta_value: number;
+  first_data_at: string;
+  last_updated: string;
+  quotes: {
+    USD: {
+      ath_date: string;
+      ath_price: number;
+      market_cap: number;
+      market_cap_change_24h: number;
+      percent_change_1h: number;
+      percent_change_1y: number;
+      percent_change_6h: number;
+      percent_change_7d: number;
+      percent_change_12h: number;
+      percent_change_15m: number;
+      percent_change_24h: number;
+      percent_change_30d: number;
+      percent_change_30m: number;
+      percent_from_price_ath: number;
+      price: number;
+      volume_24h: number;
+      volume_24h_change_24h: number;
     };
+  };
 }
 
 function Coin() {
+
     // const {coinId} = useParams<RouteParams>();
     const {coinId} = useParams() as unknown as RouteParams;
+    // const { state } = useLocation<RouteState>();
     const { state } = useLocation() as RouteState;
+    // const priceMatch = useRouteMatch("/:coinId/price");
+    // const chartMatch = useRouteMatch("/:coinId/chart");
     const priceMatch = useMatch("/:coinId/price");
     const chartMatch = useMatch("/:coinId/chart");
-    // react-query가 여기부터
-    // const [loading, setLoading] = useState(true);
-    // const [info, setInfo] = useState<InfoData>();
-    // const [priceInfo, setPriceInfo] = useState<PriceData>();
-    // useEffect(() => {
-    //     (async () => {
-    //         const infoData = await (
-    //             await fetch(`https://api.coinpaprika.com/v1/coins/${coinId}`)
-    //         ).json();
-    //         const priceData = await (
-    //             await fetch(`https://api.coinpaprika.com/v1/tickers/${coinId}`)
-    //         ).json();
-    //         setInfo(infoData);
-    //         setPriceInfo(priceData);
-    //         setLoading(false);
-    //     })();
-    // }, [coinId]);
-    // react-query가 여기까지의 기능을 구현함
-
-    // isLoading: infoLoading re네이밍함
-    const {isLoading: infoLoading, data: infoData} = useQuery<InfoData>(
-        ["info",coinId],
-        () => fetchCoinInfo(coinId),
+    const { isLoading: infoLoading, data: infoData } = useQuery<InfoData>(
+        ["info", coinId],
+        () => fetchCoinInfo(coinId)
     );
-    const {isLoading: tickersLoading, data: tickersData} = useQuery<PriceData>(
-        ["tickers",coinId],
+    const { isLoading: tickersLoading, data: tickersData } = useQuery<PriceData>(
+        ["tickers", coinId],
         () => fetchCoinTickers(coinId),
         {
-            refetchInterval: 5000,
+        refetchInterval: 5000,
         }
     );
-
     const loading = infoLoading || tickersLoading;
 
     return (
-        <Container>
-            <Helmet>
-                <title>{state?.name ? state.name : loading ? "Loading..." : infoData?.name}</title>
-            </Helmet>
-            <Header>
-                {/*
-                    url을 치고 접근할 경우 state에 값을 못받은 상태가 됨으로 에러 발생함
-                    이를 방지하고자 state.name 을 state?.name || 'Loading...' 으로 변경함 
-                */}
-                <Title>{state?.name ? state.name : loading ? "Loading..." : infoData?.name}</Title>
-            </Header>
-            {/* {loading ? <Loader>'Loading...'</Loader> : priceInfo?.quotes.USD.ath_price} */}
-            {loading ? <Loader>'Loading...'</Loader> : (
-                <>
-                    <Overview>
-                        <OverviewItem>
-                            <span>Rank:</span>
-                            <span>{infoData?.rank}</span>
-                        </OverviewItem>
-                        <OverviewItem>
-                            <span>Symbol:</span>
-                            <span>${infoData?.symbol}</span>
-                        </OverviewItem>
-                        <OverviewItem>
-                            <span>Price:</span>
-                            <span>{tickersData?.quotes.USD.price.toFixed(3)}</span>
-                        </OverviewItem>
-                    </Overview>
-                    <Description>{infoData?.description}</Description>
-                    <Overview>
-                        <OverviewItem>
-                            <span>Total Suply:</span>
-                            <span>{tickersData?.total_supply}</span>
-                        </OverviewItem>
-                        <OverviewItem>
-                            <span>Max Supply:</span>
-                            <span>{tickersData?.max_supply}</span>
-                        </OverviewItem>
-                    </Overview>
-                    <Tabs>
-                        <Tab isActive={chartMatch !== null}>
-                            <Link to={`/${coinId}/chart`}>Chart</Link>
-                        </Tab>
-                        <Tab isActive={priceMatch !== null}>
-                            <Link to={`/${coinId}/price`}>Price</Link>
-                        </Tab>
-                    </Tabs>
-                    <Outlet context={{coinId}}/>
-                </>
-            )}
-        </Container>
+    <Container>
+        <Helmet>
+            <title>
+                {state?.name ? state.name : loading ? "Loading..." : infoData?.name}
+            </title>
+        </Helmet>
+        <Header>
+            <Title>
+                {state?.name ? state.name : loading ? "Loading..." : infoData?.name}
+            </Title>
+        </Header>
+        {loading ? (
+            <Loader>Loading...</Loader>
+        ) : (
+            <>
+                <Overview>
+                    <OverviewItem>
+                        <span>Rank:</span>
+                        <span>{infoData?.rank}</span>
+                    </OverviewItem>
+                    <OverviewItem>
+                        <span>Symbol:</span>
+                        <span>${infoData?.symbol}</span>
+                    </OverviewItem>
+                    <OverviewItem>
+                        <span>Price:</span>
+                        <span>${tickersData?.quotes?.USD?.price?.toFixed(3)}</span>
+                    </OverviewItem>
+                </Overview>
+                <Description>{infoData?.description}</Description>
+                <Overview>
+                    <OverviewItem>
+                        <span>Total Suply:</span>
+                        <span>{tickersData?.total_supply}</span>
+                    </OverviewItem>
+                    <OverviewItem>
+                        <span>Max Supply:</span>
+                        <span>{tickersData?.max_supply}</span>
+                    </OverviewItem>
+                </Overview>
+
+                <Tabs>
+                    <Tab isActive={chartMatch !== null}>
+                        <Link to={`/${coinId}/chart`}>Chart</Link>
+                    </Tab>
+                    <Tab isActive={priceMatch !== null}>
+                        <Link to={`/${coinId}/price`}>Price</Link>
+                    </Tab>
+                </Tabs>
+
+                <Outlet context={{coinId}}/>
+            </>
+        )}
+    </Container>
     );
 }
-
 export default Coin;
