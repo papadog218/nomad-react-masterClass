@@ -5,8 +5,8 @@ import { isDarkAtom } from "../atoms";
 
 const TopMenuWrap = styled.div`
     display: flex;
-    justify-content: space-around;
-    /* max-width: 580px; */
+    justify-content: space-between;
+    max-width: 480px;
     margin: 0 auto;
 `;
 
