@@ -7,7 +7,7 @@ const TopMenuWrap = styled.div`
     display: flex;
     justify-content: space-between;
     max-width: 480px;
-    margin: 0 auto;
+    margin: 20px auto 0 auto;
 `;
 
 // interface TopMenuState {
