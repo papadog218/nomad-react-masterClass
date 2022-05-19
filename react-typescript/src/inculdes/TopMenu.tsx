@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { useSetRecoilState } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import styled from "styled-components";
 import { isDarkAtom } from "../atoms";
 
@@ -17,6 +17,7 @@ const TopMenuWrap = styled.div`
 
 function TopMenu() {
 
+    const isDark = useRecoilValue(isDarkAtom);
     const setDarkAtom = useSetRecoilState(isDarkAtom);
     const toggleDarkAtom = () => setDarkAtom((prev) => !prev);
 
@@ -27,7 +28,7 @@ function TopMenu() {
         <TopMenuWrap>
             {/* {pathName?.pathname = '/' ? <></> : <Link to={`/`}>&larr;</Link>} */}
             <Link to={`/`}>&larr;</Link>
-            <button onClick={toggleDarkAtom}>modeBtn</button>
+            <button onClick={toggleDarkAtom}>{isDark ? `🌞` : `🌙`}</button>
         </TopMenuWrap>
     );
 }
