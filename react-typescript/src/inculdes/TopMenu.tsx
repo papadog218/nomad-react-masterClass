@@ -6,8 +6,17 @@ import { isDarkAtom } from "../atoms";
 const TopMenuWrap = styled.div`
     display: flex;
     justify-content: space-between;
+    align-items: center;
     max-width: 480px;
     margin: 20px auto 0 auto;
+    button {
+        background-color: initial;
+        border: 0;
+        font-size: 24px;
+        &:hover {
+            cursor: pointer;
+        }
+    }
 `;
 
 // interface TopMenuState {
