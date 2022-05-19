@@ -36,18 +36,21 @@ import { useForm } from "react-hook-form";
 // react-hook-form 적용함
 function ToDoList() {
 
-    const {register, watch} = useForm();
-    console.log(watch());
+    const {register, handleSubmit, formState} = useForm();
+    const onValid = (data: any) => {
+        console.log(data);
+    };
+    console.log(formState.errors);
 
     return (
         <div>
-            <form>
-                <input {...register('email')} placeholder="email" />
-                <input {...register('firstName')} placeholder="firstName" />
-                <input {...register('lastName')} placeholder="lastName" />
-                <input {...register('username')} placeholder="username" />
-                <input {...register('password')} placeholder="password" />
-                <input {...register('passwordChk')} placeholder="passwordChk" />
+            <form style={{display: "flex", flexDirection: 'column'}} onSubmit={handleSubmit(onValid)}>
+                <input {...register('email', {required: "Email is required"})} placeholder="email" />
+                <input {...register('firstName', {required: "FirstName is required"})} placeholder="firstName" />
+                <input {...register('lastName', {required: "LastName is required"})} placeholder="lastName" />
+                <input {...register('username', {required: "Username is required", minLength: 10})} placeholder="username" />
+                <input {...register('password', {required: "Password is required", minLength: {value: 5, message: 'Your password is too short.'}})} placeholder="password" />
+                <input {...register('passwordChk', {required: "PasswordChk is required", minLength: 5})} placeholder="passwordChk" />
                 <button>Add</button>
             </form>
         </div>
