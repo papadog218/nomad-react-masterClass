@@ -16,11 +16,10 @@ function ToDo({text, category, id}: IToDo) {
             currentTarget: {name},
         } = e; // 섹시버전
         // console.log('i wanna to ', name);
-        setToDos((oldLists) => {
-            const todoIdx = oldLists.findIndex((toDo) => toDo.id === id); // 수정할 리스트의 인덱스 찾기
-            const oldList = oldLists[todoIdx]; // 기존 투두리스트
-            const newList = {text, id, category: name};
-            return oldLists;
+        setToDos((oldToDos) => {
+            const todoIdx = oldToDos.findIndex((toDo) => toDo.id === id); // 수정할 리스트의 인덱스 찾기
+            const newToDo = {text, id, category: name as any};
+            return [...oldToDos.slice(0, todoIdx), newToDo, ...oldToDos.slice(todoIdx+1)];
         });
     };
 
