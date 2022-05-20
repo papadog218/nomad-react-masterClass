@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
-import { useSetRecoilState } from "recoil";
-import { toDoState } from "../atoms";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { categoryState, toDoState } from "../atoms";
 
 interface IForm {
     toDo: string;
@@ -9,10 +9,15 @@ interface IForm {
 function CreateToDo() {
 
     const setToDos = useSetRecoilState(toDoState);
+
+    // 현제 카테고리에 맞는 배열에 리스트 생성하기
+    const category = useRecoilValue(categoryState);
+
     const {register, handleSubmit, setValue} = useForm<IForm>();
     const handleValid = ({toDo}: IForm) => {
         setToDos((oldToDos) => [
-            {text: toDo, id: Date.now(), category: 'TO_DO'},
+            // {text: toDo, id: Date.now(), category: category},
+            {text: toDo, id: Date.now(), category}, // 단축문법
             ...oldToDos
         ]);
         setValue('toDo',""); // 값이 유효하다면 input을 초기화시킴

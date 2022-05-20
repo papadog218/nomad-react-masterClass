@@ -1,9 +1,22 @@
 import { atom, selector } from "recoil";
 
+// type categories = 'TO_DO' | "DOING" | 'DONE'; // 이 파일안에서 동일하게 쓸 때
+// 현재 위의 타입들을 다른파일에서도 동일하게 사용해야하는 상황이라 enum 을 사용함
+// 오타를 방지하는 방법임
+export enum Categories {
+    // 'TO_DO',
+    // 'DOING',
+    // 'DONE',
+    // enum은 기본적으로 숫자값을 반환함 반환될 타입은 = 을 사용해서 설정가능함
+    'TO_DO' = 'TO_DO',
+    'DOING' = 'DOING',
+    'DONE' = 'DONE',
+}
+
 export interface IToDo {
     text: string;
     id: number;
-    category: 'TO_DO' | "DOING" | 'DONE';
+    category: Categories;
 }
 
 export const toDoState = atom<IToDo[]>({
@@ -24,28 +37,12 @@ export const toDoSelector = selector({
     get: ({get}) => {
         const toDos = get(toDoState);
         const category = get(categoryState);
-
         return toDos.filter((todo) => todo.category === category);
-        
-
-        // return [
-        //     toDos.filter((todo) => todo.category === "TO_DO"),
-        //     toDos.filter((todo) => todo.category === "DOING"),
-        //     toDos.filter((todo) => todo.category === "DONE"),
-        // ]; // [[{},{}]] 이런 모습으로 리턴된다함
-
-        // 2차 수정
-        // if (category === 'TO_DO')
-        //     return toDos.filter((todo) => todo.category === "TO_DO");
-        // if (category === 'DOING')
-        //     return toDos.filter((todo) => todo.category === "DOING");
-        // if (category === 'DONE')
-        //     return toDos.filter((todo) => todo.category === "DONE");
     }
 });
 
 // 사용자가 선택한 카테고리만 보이게 하기
-export const categoryState = atom({
+export const categoryState = atom<Categories>({
     key: 'category',
-    default: 'TO_DO',
+    default: Categories.TO_DO,
 })
