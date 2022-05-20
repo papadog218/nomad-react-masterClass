@@ -22,11 +22,30 @@ export const toDoState = atom<IToDo[]>({
 export const toDoSelector = selector({
     key: 'toDoSelector',
     get: ({get}) => {
-        const toDos = get(toDoState)
-        return [
-            toDos.filter((todo) => todo.category === "TO_DO"),
-            toDos.filter((todo) => todo.category === "DOING"),
-            toDos.filter((todo) => todo.category === "DONE"),
-        ]; // [[{},{}]] 이런 모습으로 리턴된다함
+        const toDos = get(toDoState);
+        const category = get(categoryState);
+
+        return toDos.filter((todo) => todo.category === category);
+        
+
+        // return [
+        //     toDos.filter((todo) => todo.category === "TO_DO"),
+        //     toDos.filter((todo) => todo.category === "DOING"),
+        //     toDos.filter((todo) => todo.category === "DONE"),
+        // ]; // [[{},{}]] 이런 모습으로 리턴된다함
+
+        // 2차 수정
+        // if (category === 'TO_DO')
+        //     return toDos.filter((todo) => todo.category === "TO_DO");
+        // if (category === 'DOING')
+        //     return toDos.filter((todo) => todo.category === "DOING");
+        // if (category === 'DONE')
+        //     return toDos.filter((todo) => todo.category === "DONE");
     }
 });
+
+// 사용자가 선택한 카테고리만 보이게 하기
+export const categoryState = atom({
+    key: 'category',
+    default: 'TO_DO',
+})
