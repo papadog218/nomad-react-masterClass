@@ -164,11 +164,29 @@ const infoVariants = {
 
 const offset = 6;
 
+const ArticleTitle = styled.div`
+  color: #fff;
+  position: relative;
+  display: block;
+  z-index: 9999;
+  top: -120px;
+  font-size: 28px;
+  padding-left: 20px;
+`;
+
 function Tv() {
   const history = useHistory();
   const bigMovieMatch = useRouteMatch<{ tvId: string }>("/tv/:tvId");
   const { scrollY } = useViewportScroll();
 
+  const { data: atData, isLoading: atLoading } = useQuery<IGetMoviesResult>(
+    ["tv", "airing_today"],
+    getTvShows
+  );
+  const { data: , isLoading } = useQuery<IGetMoviesResult>(
+    ["tv", "airing_today"],
+    getTvShows
+  );
   const { data, isLoading } = useQuery<IGetMoviesResult>(
     ["tv", "airing_today"],
     getTvShows
@@ -185,13 +203,27 @@ function Tv() {
       const maxIndex = Math.floor(totalMovies / offset) - 1;
       setIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
     }
+    if (data) {
+      if (leaving) return;
+      toggleLeaving();
+      const totalMovies = data.results.length - 1;
+      const maxIndex = Math.floor(totalMovies / offset) - 1;
+      setIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
+    }
+    if (data) {
+      if (leaving) return;
+      toggleLeaving();
+      const totalMovies = data.results.length - 1;
+      const maxIndex = Math.floor(totalMovies / offset) - 1;
+      setIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
+    }
   };
 
   const toggleLeaving = () => setLeaving((prev) => !prev);
   const onBoxClicked = (tvId: number) => {
     history.push(`/tv/${tvId}`);
   };
-  const onOverlayClick = () => history.push("/");
+  const onOverlayClick = () => history.push("/tv");
 
   const clickedMovie =
     bigMovieMatch?.params.tvId &&
@@ -207,10 +239,10 @@ function Tv() {
             onClick={incraseIndex}
             bgPhoto={makeImagePath(data?.results[0].backdrop_path || "")}
           >
-            {/* <Title>now playing</Title> */}
             <Title>{data?.results[0].name}</Title>
             <Overview>{data?.results[0].overview}</Overview>
           </Banner>
+          <ArticleTitle>Airing Today {`>`}</ArticleTitle>
           <Slider>
             <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
               <Row
@@ -265,7 +297,7 @@ function Tv() {
                           )})`,
                         }}
                       />
-                      <BigTitle>{clickedMovie.title}</BigTitle>
+                      <BigTitle>{clickedMovie.name}</BigTitle>
                       <BigOverview>{clickedMovie.overview}</BigOverview>
                     </>
                   )}
@@ -275,6 +307,9 @@ function Tv() {
           </AnimatePresence>
         </>
       )}
+      <ArticleTitle>Latest Shows {`>`}</ArticleTitle>
+      <ArticleTitle>Popular {`>`}</ArticleTitle>
+      <ArticleTitle>Top Rated {`>`}</ArticleTitle>
     </Wrapper>
   );
 }

@@ -21,14 +21,8 @@ export interface IGetMoviesResult {
   total_results: number;
 }
 
-export enum OrderBy {
-  NOW_PLAYING = `now_playing`,
-  UPCOMING = `upcoming`,
-  TOP_RATED = `top_rated`,
-}
-
 export function getMovies() {
-  return fetch(`${BASE_PATH}/movie/${OrderBy.NOW_PLAYING}?api_key=${API_KEY}`).then(
+  return fetch(`${BASE_PATH}/movie/now_playing?api_key=${API_KEY}`).then(
     (response) => response.json()
   );
 }
@@ -37,16 +31,7 @@ export function getTvShows() {
     (response) => response.json()
   );
 }
-// export function getUpcomingMovies() {
-//   return fetch(`${BASE_PATH}/movie/${OrderBy.UPCOMING}?api_key=${API_KEY}`).then(
-//     (response) => response.json()
-//   );
-// }
-// export function getTopRatedMovies() {
-//   return fetch(`${BASE_PATH}/movie/${OrderBy.TOP_RATED}?api_key=${API_KEY}`).then(
-//     (response) => response.json()
-//   );
-// }
+
 
 
 
